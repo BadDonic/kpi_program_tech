@@ -1,4 +1,6 @@
 import java.security.InvalidParameterException;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Matrix {
     private int rows;
@@ -70,32 +72,24 @@ public class Matrix {
         return new Matrix(result);
     }
 
-
-
+    @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        for(int i = 0; i < rows; i++) {
-            builder.append("[");
-            for(int j = 0; j < cols; j++) {
-                if(j >= 1)
-                    builder.append(" ");
-                builder.append(String.format("%.4f", data[i][j]));
-            }
-            builder.append("]\n");
-        }
-        return builder.toString();
+        final StringBuilder sb = new StringBuilder("Matrix{");
+        sb.append("rows=").append(rows);
+        sb.append(", cols=").append(cols);
+        sb.append(", data=").append(Arrays.toString(data));
+        sb.append('}');
+        return sb.toString();
     }
 
-
-    public boolean equals(Matrix matrix) {
-        if (matrix == null) return false;
-        if (cols != matrix.getCols() || rows != matrix.getRows()) return false;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (Math.abs(data[i][j] - matrix.getArray()[i][j]) > 0.01) return false;
-            }
-        }
-        return true;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Matrix matrix = (Matrix) o;
+        return rows == matrix.rows &&
+                cols == matrix.cols &&
+                Arrays.equals(data, matrix.data);
     }
 
     public double determinant() {
@@ -123,7 +117,6 @@ public class Matrix {
 
     private double[][] minor(double[][] matrix, int row, int col) {
         double[][] minor = new double[matrix.length - 1][matrix.length - 1];
-
         for (int i = 0; i < matrix.length; i++)
             for (int j = 0; i != row && j < matrix[i].length; j++)
                 if (j != col)
