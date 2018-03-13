@@ -7,16 +7,11 @@ public class Matrix {
     private int cols;
     private double[][] data;
 
-    public Matrix() {
-        this(1,1);
-    }
-
-    Matrix(int size) {
-        this(size, size);
-    }
+    Matrix() { this(1,1); }
+    Matrix(int size) { this(size, size); }
 
     Matrix(int rows, int cols) {
-        if (rows < 1 || cols < 1) throw new InvalidParameterException("invalid matrix dimension");
+        if (rows < 1 || cols < 1) throw new InvalidParameterException("Invalid Matrix Dimension");
         this.rows = rows;
         this.cols = cols;
         data = new double[rows][cols];
@@ -45,11 +40,10 @@ public class Matrix {
     }
 
     private boolean isValid (double[][] matrix) {
-        if (matrix == null) return false;
+        if (matrix == null || matrix.length == 0) return false;
         int cols = matrix[0].length;
-        for (int i = 1; i < matrix.length; i++) {
+        for (int i = 1; i < matrix.length; i++)
             if (matrix[i].length != cols) return false;
-        }
         return true;
     }
 
@@ -64,7 +58,7 @@ public class Matrix {
 
     public Matrix diff(Matrix matrix) {
         if (matrix == null) throw new NullPointerException("Can not subtract null matrix");
-        if (matrix.getRows() != rows || matrix.getCols() != cols) throw new InvalidParameterException("Illegal matrix dimensions.");
+        if (matrix.getRows() != rows || matrix.getCols() != cols) throw new InvalidParameterException("Matrices must be of the same dimension");
         double[][] result = new double[rows][cols];
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
@@ -77,30 +71,28 @@ public class Matrix {
         final StringBuilder sb = new StringBuilder("Matrix{");
         sb.append("rows=").append(rows);
         sb.append(", cols=").append(cols);
-        sb.append(", data=").append(Arrays.toString(data));
+        sb.append(", data=").append(Arrays.deepToString(data));
         sb.append('}');
         return sb.toString();
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Matrix matrix = (Matrix) o;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Matrix matrix = (Matrix) obj;
         return rows == matrix.rows &&
                 cols == matrix.cols &&
-                Arrays.equals(data, matrix.data);
+                Arrays.deepEquals(matrix.getArray(), data);
     }
 
     public double determinant() {
-        if (cols != rows)
-            throw new IllegalStateException("Invalid Matrix Dimensions");
-        return determinant(data);
+        return determinant(this);
     }
 
     public double determinant(Matrix matrix) {
-        if (matrix.getCols() != matrix.getRows())
-            throw new IllegalStateException("Invalid Matrix Dimensions");
+        if ( matrix == null || matrix.getCols() != matrix.getRows())
+            throw new InvalidParameterException("Matrix must be square");
         return determinant(data);
     }
 
