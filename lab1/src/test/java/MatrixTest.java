@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.security.InvalidParameterException;
@@ -13,43 +14,34 @@ class MatrixTest {
 
     @Test @DisplayName("Test constructor without params")
     void constructorsWithoutParams() {
-        assertAll("constructorsWithoutParams",
-                () -> assertNotNull(new Matrix()),
-                () -> assertArrayEquals(new double[1][1], new Matrix().getArray())
-        );
+        assertArrayEquals(new double[1][1], new Matrix().getArray());
     }
 
     @Test @DisplayName("Test constructor with size")
     void constructorWithSize() {
         assertAll("constructorWithSize",
-                () -> assertNotNull(new Matrix(1)),
                 () -> assertArrayEquals(new double[][]{{0, 0}, {0, 0}}, new Matrix(2).getArray()),
-                () -> assertThrows(InvalidParameterException.class, () -> new Matrix(0)),
-                () -> assertThrows(InvalidParameterException.class, () -> new Matrix(-2)),
-                () -> assertArrayEquals(new Matrix().getArray(), new Matrix(1).getArray())
+                () -> assertEquals("Invalid Matrix Dimension", assertThrows(InvalidParameterException.class, () -> new Matrix(0)).getMessage()),
+                () -> assertEquals("Invalid Matrix Dimension",assertThrows(InvalidParameterException.class, () -> new Matrix(-2)).getMessage())
         );
     }
 
     @Test @DisplayName("Test constructor with rows and cols")
     void constructorWithRowsAndCols() {
         assertAll("constructorWithRowsAndCols",
-                () -> assertNotNull(new Matrix(3, 2)),
                 () -> assertArrayEquals(new double[][]{{0, 0}, {0, 0}, {0, 0}}, new Matrix(3, 2).getArray()),
-                () -> assertThrows(InvalidParameterException.class, () -> new Matrix(0, 3)),
-                () -> assertThrows(InvalidParameterException.class, () -> new Matrix(1, -1)),
-                () -> assertArrayEquals(new Matrix().getArray(),new Matrix(1, 1).getArray()),
-                () -> assertArrayEquals(new Matrix(2).getArray(), new Matrix(2, 2).getArray())
+                () -> assertEquals("Invalid Matrix Dimension", assertThrows(InvalidParameterException.class, () -> new Matrix(0, 3)).getMessage()),
+                () -> assertEquals("Invalid Matrix Dimension", assertThrows(InvalidParameterException.class, () -> new Matrix(1, -1)).getMessage())
         );
     }
 
     @Test @DisplayName("Test constructor with array")
     void constructorWithArray() {
         assertAll("constructorWithArray",
-                () -> assertNotNull(new Matrix(test)),
                 () -> assertArrayEquals(test, new Matrix(test).getArray()),
-                () -> assertThrows(InvalidParameterException.class, () -> new Matrix(new double[][]{{2, 5, 1}, {2}, {3, 2}, {3, 3}})),
-                () -> assertThrows(InvalidParameterException.class, () -> new Matrix(null)),
-                () -> assertThrows(InvalidParameterException.class, () -> new Matrix(new double[][]{}))
+                () -> assertEquals("Your array is not a matrix", assertThrows(InvalidParameterException.class, () -> new Matrix(new double[][]{{2, 5, 1}, {2}, {3, 2}, {3, 3}})).getMessage()),
+                () -> assertEquals("Matrix is null",assertThrows(NullPointerException.class, () -> new Matrix(null)).getMessage()),
+                () -> assertEquals("Your array is not a matrix",assertThrows(InvalidParameterException.class, () -> new Matrix(new double[][]{})).getMessage())
         );
     }
 
@@ -78,8 +70,9 @@ class MatrixTest {
 
     @Test @DisplayName("Test equals")
     void equals() {
+        Matrix same = new Matrix(test);
         assertAll("equals",
-                () -> assertEquals(new Matrix(test), new Matrix(test)),
+                () -> assertEquals(same, same),
                 () -> assertNotEquals(null, new Matrix(test)),
                 () -> assertEquals(new Matrix(test), new Matrix(new double[][]{{2, 2, 4, 4}, {8, 2, 4, 10}, {8, 4, 4, 6}, {4, 12, 6, 6}})),
                 () -> assertNotEquals(new Matrix(test), new Matrix())
@@ -103,12 +96,11 @@ class MatrixTest {
             }
 
         assertAll("divide",
-                () -> assertThrows(InvalidParameterException.class, () -> new Matrix().divide(0)),
+                () -> assertEquals("Can not divide on zero", assertThrows(InvalidParameterException.class, () -> new Matrix().divide(0)).getMessage()),
                 () -> assertEquals(new Matrix(test), new Matrix(test).divide(1)),
                 () -> assertEquals(new Matrix(expectedDivided1), new Matrix(test).divide(2)),
                 () -> assertEquals(new Matrix(expectedDivided2), new Matrix(test).divide(3)),
-                () -> assertEquals(new Matrix(expectedDivided3), new Matrix(test).divide(-1)),
-                () -> assertNotEquals(new Matrix(expectedDivided1), new Matrix(test).divide(3))
+                () -> assertEquals(new Matrix(expectedDivided3), new Matrix(test).divide(-1))
         );
     }
 
@@ -127,11 +119,11 @@ class MatrixTest {
                 {1, 1, 1, 1}
         };
         assertAll("diff",
-                () -> assertThrows(NullPointerException.class, () -> new Matrix(test).diff(null)),
+                () -> assertEquals("Can not subtract null matrix", assertThrows(NullPointerException.class, () -> new Matrix(test).diff(null)).getMessage()),
                 () -> assertEquals(new Matrix(test.length), new Matrix(test).diff(new Matrix(test))),
                 () -> assertEquals(new Matrix(test), new Matrix(test).diff(new Matrix(test.length))),
                 () -> assertEquals(new Matrix(expectedRes), new Matrix(test).diff(new Matrix(arr))),
-                () -> assertThrows(InvalidParameterException.class, () -> new Matrix(test).diff(new Matrix()))
+                () -> assertEquals("Matrices must be of the same dimension", assertThrows(InvalidParameterException.class, () -> new Matrix(test).diff(new Matrix())).getMessage())
         );
     }
 
@@ -139,9 +131,9 @@ class MatrixTest {
     void determinant() {
         assertAll("determinant",
                 () -> assertEquals(0, new Matrix().determinant()),
-                () -> assertEquals(0, new Matrix().determinant(new Matrix(4))),
-                () -> assertThrows(InvalidParameterException.class, () -> new Matrix().determinant(null)),
-                () -> assertThrows(InvalidParameterException.class, () -> new Matrix(new double[][]{{0, 0}, {0}}).determinant()),
+                () -> assertEquals(0, Matrix.determinant(new Matrix(4))),
+                () -> assertEquals("Matrix is null", assertThrows(NullPointerException.class, () -> Matrix.determinant(null)).getMessage()),
+                () -> assertEquals("Matrix must be square", assertThrows(InvalidParameterException.class, () -> new Matrix(new double[][]{{0}, {0}}).determinant()).getMessage()),
                 () -> assertEquals(816, new Matrix(test).determinant())
         );
     }

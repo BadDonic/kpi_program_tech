@@ -15,6 +15,7 @@ public class Matrix {
         this.rows = rows;
         this.cols = cols;
         data = new double[rows][cols];
+        //this(new double[rows][cols]);
     }
 
     Matrix(double[][] data) {
@@ -23,8 +24,7 @@ public class Matrix {
         cols = data[0].length;
         this.data = new double[rows][cols];
         for (int i = 0; i < rows; i++)
-            for (int j = 0; j < cols; j++)
-                this.data[i][j] = data[i][j];
+            System.arraycopy(data[i], 0, this.data[i], 0, cols);
     }
 
     public double[][] getArray() {
@@ -40,7 +40,8 @@ public class Matrix {
     }
 
     private boolean isValid (double[][] matrix) {
-        if (matrix == null || matrix.length == 0) return false;
+        if (matrix == null) throw new NullPointerException("Matrix is null");
+        if (matrix.length == 0) return false;
         int cols = matrix[0].length;
         for (int i = 1; i < matrix.length; i++)
             if (matrix[i].length != cols) return false;
@@ -90,13 +91,14 @@ public class Matrix {
         return determinant(this);
     }
 
-    public double determinant(Matrix matrix) {
-        if ( matrix == null || matrix.getCols() != matrix.getRows())
+    public static double determinant(Matrix matrix) {
+        if (matrix == null) throw new NullPointerException("Matrix is null");
+        if (matrix.getCols() != matrix.getRows())
             throw new InvalidParameterException("Matrix must be square");
-        return determinant(data);
+        return determinant(matrix.getArray());
     }
 
-    private double determinant(double[][] matrix) {
+    private static double determinant(double[][] matrix) {
         if (matrix.length == 1) return matrix[0][0];
         if (matrix.length == 2)
             return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
@@ -107,7 +109,7 @@ public class Matrix {
         return det;
     }
 
-    private double[][] minor(double[][] matrix, int row, int col) {
+    private static double[][] minor(double[][] matrix, int row, int col) {
         double[][] minor = new double[matrix.length - 1][matrix.length - 1];
         for (int i = 0; i < matrix.length; i++)
             for (int j = 0; i != row && j < matrix[i].length; j++)
