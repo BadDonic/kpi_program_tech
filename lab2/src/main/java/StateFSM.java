@@ -13,7 +13,7 @@ public class StateFSM extends FSM {
             case q3: return new q3();
             case q4: return new q4();
             case q5: return new q5();
-            case q6: return new q6();
+            case q6:
             default:
                 return new Error();
         }
@@ -65,7 +65,7 @@ public class StateFSM extends FSM {
     }
     class q6 extends State {
         States nextState(Events events) {
-            return States.q6;
+            return States.ERROR;
         }
     }
 
