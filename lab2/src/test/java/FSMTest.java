@@ -1,9 +1,19 @@
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.stream.Stream;
 class FSMTest {
+    private static SwitchFSM switchFSM;
+    private static TransTableFSM transTableFSM;
+    private static StateFSM stateFSM;
+    @BeforeAll
+    static void init() {
+        switchFSM = new SwitchFSM();
+        transTableFSM = new TransTableFSM();
+        stateFSM = new StateFSM();
+    }
     static class FSMProvider implements ArgumentsProvider {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
@@ -28,26 +38,26 @@ class FSMTest {
     @MethodSource("provideCorrectString")
     @CsvFileSource(resources = "CorrectStrings.csv")
     void TestFSMScanInCorrectStrings(String str) {
-        assertTrue(new SwitchFSM().scan(str));
-        assertTrue(new TransTableFSM().scan(str));
-        assertTrue(new StateFSM().scan(str));
+        assertTrue(switchFSM.scan(str));
+        assertTrue(transTableFSM.scan(str));
+        assertTrue(stateFSM.scan(str));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", "+-", "+4-"})
+    @ValueSource(strings = {"", "i", "+-", "+4-","-5G-d"})
     @CsvFileSource(resources = "InCorrectStrings.csv")
     @MethodSource("provideInCorrectString")
     void TestFSMScanInNotCorrectStrings(String str) {
-        assertFalse(new SwitchFSM().scan(str));
-        assertFalse(new TransTableFSM().scan(str));
-        assertFalse(new StateFSM().scan(str));
+        assertFalse(switchFSM.scan(str));
+        assertFalse(transTableFSM.scan(str));
+        assertFalse(stateFSM.scan(str));
     }
 
     @ParameterizedTest
     @ArgumentsSource(FSMProvider.class)
     void TestFSMScanWithMyArguments(String str, boolean res) {
-        assertEquals(new SwitchFSM().scan(str), res);
-        assertEquals(new TransTableFSM().scan(str), res);
-        assertEquals(new StateFSM().scan(str), res);
+        assertEquals(res, switchFSM.scan(str));
+        assertEquals(res, transTableFSM.scan(str));
+        assertEquals(res, stateFSM.scan(str));
     }
 }

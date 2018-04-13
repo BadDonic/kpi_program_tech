@@ -17,8 +17,8 @@ public abstract class FSM {
     public boolean scan(String str) {
         currentStates = States.q0;
         for (char ch : str.toCharArray()) {
-            if (currentStates == States.ERROR) return false;
             Events events = recognizeEvent(ch);
+            if (currentStates == States.ERROR) return false;
             currentStates = nextState(events);
         }
         return currentStates == States.q6;
