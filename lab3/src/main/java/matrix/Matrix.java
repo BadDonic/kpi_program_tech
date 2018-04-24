@@ -1,18 +1,25 @@
-package Matrix;
+package matrix;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Matrix {
     private int rows;
     private int cols;
     private double[][] data;
 
-    public Matrix() { this(1,1); }
-    public Matrix(int size) { this(size, size); }
+    public Matrix() {
+        this(1, 1);
+    }
+
+    public Matrix(int size) {
+        this(size, size);
+    }
 
     public Matrix(int rows, int cols) {
-        if (rows < 1 || cols < 1) throw new InvalidParameterException("Invalid Matrix Dimension");
+        if (rows < 1 || cols < 1) throw new InvalidParameterException("Invalid matrix Dimension");
         this.rows = rows;
         this.cols = cols;
         data = new double[rows][cols];
@@ -40,8 +47,8 @@ public class Matrix {
         return rows;
     }
 
-    private boolean isValid (double[][] matrix) {
-        if (matrix == null) throw new NullPointerException("Matrix is null");
+    private boolean isValid(double[][] matrix) {
+        if (matrix == null) throw new NullPointerException("matrix is null");
         if (matrix.length == 0) return false;
         int cols = matrix[0].length;
         for (int i = 1; i < matrix.length; i++)
@@ -60,7 +67,8 @@ public class Matrix {
 
     public Matrix diff(Matrix matrix) {
         if (matrix == null) throw new NullPointerException("Can not subtract null matrix");
-        if (matrix.getRows() != rows || matrix.getCols() != cols) throw new InvalidParameterException("Matrices must be of the same dimension");
+        if (matrix.getRows() != rows || matrix.getCols() != cols)
+            throw new InvalidParameterException("Matrices must be of the same dimension");
         double[][] result = new double[rows][cols];
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
@@ -70,10 +78,7 @@ public class Matrix {
 
     @Override
     public String toString() {
-        return "Matrix{" + "rows=" + rows +
-                ", cols=" + cols +
-                ", data=" + Arrays.deepToString(data) +
-                '}';
+        return Arrays.deepToString(data);
     }
 
     @Override
@@ -91,9 +96,9 @@ public class Matrix {
     }
 
     public static double determinant(Matrix matrix) {
-        if (matrix == null) throw new NullPointerException("Matrix is null");
+        if (matrix == null) throw new NullPointerException("matrix is null");
         if (matrix.getCols() != matrix.getRows())
-            throw new InvalidParameterException("Matrix must be square");
+            throw new InvalidParameterException("matrix must be square");
         return determinant(matrix.getArray());
     }
 
@@ -115,5 +120,25 @@ public class Matrix {
                 if (j != col)
                     minor[i - 1][j < col ? j : j - 1] = matrix[i][j];
         return minor;
+    }
+
+    public static Matrix convert(String strMatrix) {
+        List<Double> list = new ArrayList<>();
+        strMatrix = strMatrix.substring(1, strMatrix.length() - 1);
+        String[] starts = strMatrix.split("\\[");
+        int size = starts.length - 1;
+        for (int i = 1; i <= size; i++) {
+            if (starts[i].equals("")) continue;
+            String[] withoutBracers = starts[i].split("]");
+            String[] numbers = withoutBracers[0].split(",\\s?");
+            for (String number : numbers)
+                list.add(Double.parseDouble(number));
+        }
+        int size2 = list.size() / size;
+        double[][] array = new double[size][size2];
+        for (int i = 0; i < list.size(); i++) {
+            array[i / size2][i % size2] = list.get(i);
+        }
+        return new Matrix(array);
     }
 }
