@@ -18,7 +18,7 @@ public class Compiler {
                 String[] parts = input.split("=");
                 if (!parts[0].trim().matches("[a-zA-Z_][a-zA-Z_0-9]*") || parts.length != 2)
                     throw new InvalidParameterException("Invalid Input");
-                Object data = (Object) compile(parts[1].trim());
+                Object data = compile(parts[1].trim());
                 vars.put(parts[0].trim(), data);
                 return data;
             }
@@ -163,6 +163,5 @@ public class Compiler {
         System.out.println(compiler.compile("det([[0]])"));
         System.out.println(compiler.compile("A = [[1, 2], [10, 1]]"));
         System.out.println(compiler.compile("det(A - (A - A) / det([[0.5]])) / 0.5"));
-
     }
 }
