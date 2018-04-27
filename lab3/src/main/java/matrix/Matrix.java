@@ -1,6 +1,7 @@
 package matrix;
 
 import java.security.InvalidParameterException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -99,7 +100,7 @@ public class Matrix {
         if (matrix == null) throw new NullPointerException("matrix is null");
         if (matrix.getCols() != matrix.getRows())
             throw new InvalidParameterException("matrix must be square");
-        return determinant(matrix.getArray());
+        return Double.parseDouble(new DecimalFormat("##.##").format(determinant(matrix.getArray())));
     }
 
     private static double determinant(double[][] matrix) {

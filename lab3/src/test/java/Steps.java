@@ -1,4 +1,5 @@
 import compiler.Compiler;
+import matrix.Matrix;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
@@ -9,14 +10,13 @@ public class Steps {
 
     private Compiler compiler;
     private Object result;
-    private Exception exception;
 
-    @Given("a new compiler")
-    public void newCompiler() {
+    @Given("Compiler")
+    public void Compiler() {
         compiler = new Compiler();
     }
 
-    @Given("an compiler with a created variable $varname with value $value")
+    @Given("Compiler with a created variable $varname with value $value")
     public void givenCompilerWithCreatedVariableWithValue(String varname, String value) {
         compiler = new Compiler();
         compiler.compile(varname + " = " + value);
@@ -29,25 +29,26 @@ public class Steps {
 
     @When("I compile string $string")
     public void iCompileString(String string) {
-        try{
-            result = compiler.compile(string);
-        } catch (Exception e){
-            exception = e;
-        }
+        result = compiler.compile(string);
     }
 
     @Then("I should get result $value")
     public void iShouldGetResult(String value) {
-        assertEquals(value, result.toString());
-    }
-
-    @Then("I should get an error message $message")
-    public void iShouldGetErrorMessage(String message) {
-        assertEquals(message, result.toString());
+        if (result instanceof Matrix)
+            assertEquals(Matrix.convert(value), result);
+        else if (result instanceof Double)
+            assertEquals(Double.parseDouble(value), result);
+        else
+            assertEquals(value, result);
     }
 
     @Then("should be created var $varname with value $value")
     public void varCreated(String varname, String value) {
-        assertEquals(value, compiler.compile(varname).toString());
+        if (result instanceof Matrix)
+            assertEquals(Matrix.convert(value), compiler.compile(varname));
+        else if (result instanceof Double)
+            assertEquals(Double.parseDouble(value), compiler.compile(varname));
+        else
+            assertEquals(value, result);
     }
 }

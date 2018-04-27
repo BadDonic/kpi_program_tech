@@ -4,13 +4,13 @@ import matrix.Matrix;
 
 import java.security.InvalidParameterException;
 
-public class OperationNode extends Node {
+public class OperatorNode extends Node {
     private char operation;
 
     private Node left;
     private Node right;
 
-    public OperationNode(char token, Node l, Node r) {
+    public OperatorNode(char token, Node l, Node r) {
         operation = token;
         left = l;
         right = r;
@@ -48,7 +48,7 @@ public class OperationNode extends Node {
                 throw new InvalidParameterException("det() only works with Matrix");
             }
             default:
-                return null;
+                return "Not found close bracket";
         }
     }
 }
