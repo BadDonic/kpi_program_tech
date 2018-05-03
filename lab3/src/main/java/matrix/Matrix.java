@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Matrix {
     private int rows;
@@ -62,7 +63,7 @@ public class Matrix {
         double[][] result = new double[rows][cols];
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
-                result[i][j] = this.data[i][j] / k;
+                result[i][j] = Math.floor(this.data[i][j] / k * 100) / 100;
         return new Matrix(result);
     }
 
@@ -73,13 +74,15 @@ public class Matrix {
         double[][] result = new double[rows][cols];
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
-                result[i][j] = data[i][j] - matrix.getArray()[i][j];
+                result[i][j] = Math.floor((data[i][j] - matrix.getArray()[i][j]) * 100) / 100;
         return new Matrix(result);
     }
 
     @Override
     public String toString() {
-        return Arrays.deepToString(data);
+        return Arrays.deepToString(Arrays.stream(data)
+                .map(numbers -> Arrays.stream(numbers).map(number -> Math.floor(number * 100) / 100).toArray())
+                .toArray());
     }
 
     @Override
@@ -100,7 +103,7 @@ public class Matrix {
         if (matrix == null) throw new NullPointerException("matrix is null");
         if (matrix.getCols() != matrix.getRows())
             throw new InvalidParameterException("matrix must be square");
-        return Double.parseDouble(new DecimalFormat("##.##").format(determinant(matrix.getArray())));
+        return Math.floor(determinant(matrix.getArray()) * 100) / 100;
     }
 
     private static double determinant(double[][] matrix) {
