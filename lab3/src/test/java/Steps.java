@@ -27,7 +27,7 @@ public class Steps {
     }
 
     @Then("I should get result $value")
-    public void ShouldGetResult(String value) {
+    public void GetResult(String value) {
         if (result instanceof Matrix)
             assertEquals(Matrix.convert(value), result);
         else if (result instanceof Double)
